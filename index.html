@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACILITY 404 // Horror Escape Room Puzzle</title>
+    <meta name="description" content="A dark horror-mystery escape room puzzle game. Decipher electronic keypads, reveal consonants, avoid toxic lockdown purges, and survive the facility.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Poison Gas Fog Canvas Overlay (Fills room on Game Over) -->
+    <canvas id="gasCanvas"></canvas>
+
+    <!-- Emergency Alarm Red Strobe Overlay -->
+    <div id="alarmOverlay" class="alarm-overlay"></div>
+
+    <!-- Heavy Hydraulic Door Split Animation -->
+    <div id="doorOverlay" class="door-split-overlay">
+        <div class="door-panel-left"></div>
+        <div class="door-panel-right"></div>
+    </div>
+
+    <!-- Main Game Viewport -->
+    <div class="game-viewport light-flicker">
+        <div class="viewport-overlay"></div>
+
+        <!-- Central Terminal Console Frame -->
+        <main class="terminal-frame" id="mainTerminal">
+            
+            <!-- Terminal Header Bar -->
+            <header class="terminal-header">
+                <div class="facility-title">
+                    <span>☣ SECTOR-7</span>
+                    <span class="sector-badge" id="roomBadge">ROOM 01</span>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-box">
+                        <span class="score-label">SCORE:</span>
+                        <span class="score-val" id="liveScore">0</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score-label">HIGH:</span>
+                        <span class="score-val" id="highScoreVal">0</span>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="icon-btn" id="ambientBtn" title="Toggle Dark Ambient Music">
+                        <span>🎵</span> AMBIENT: ON
+                    </button>
+                    <button class="icon-btn" id="muteAudioBtn" title="Toggle Sound FX">
+                        <span>🔊</span> SFX: ON
+                    </button>
+                    <button class="icon-btn" id="flickerBtn" title="Toggle Light Flicker">
+                        <span>💡</span> FLICKER
+                    </button>
+                </div>
+            </header>
+
+            <!-- Phosphorescent CRT Display Screen -->
+            <section class="crt-screen">
+                
+                <!-- Screen Top Status -->
+                <div class="screen-top-bar">
+                    <span>SYSTEM PROTOCOL: WORD CIPHER LOCK</span>
+                    <span class="security-status" id="securityStatus">● SECURE</span>
+                </div>
+
+                <!-- Word Puzzle Letter Slots -->
+                <div class="word-display-container" id="wordDisplay">
+                    <!-- Letter slots injected dynamically -->
+                </div>
+
+                <!-- Hazard Attempt Gauge (6 Biohazard Lamps) -->
+                <div class="attempts-gauge-container">
+                    <div class="gauge-label">
+                        <span>LOCKDOWN PURGE GAUGE</span> // ATTEMPTS REMAINING: <strong id="attemptsCountText">6 / 6</strong>
+                    </div>
+                    <div class="lamps-row" id="lampsContainer">
+                        <!-- 6 hazard lamps injected dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Facility Clue / Lore Banner -->
+            <div class="lore-banner">
+                <span class="tag">SECURITY LOG</span>
+                <span id="loreText">[LOG #101] Security lock active. Vowels auto-revealed. Guess consonants to unlock door.</span>
+            </div>
+
+            <!-- On-Screen Keypad (Alphabet Layout) -->
+            <section class="keypad-wrapper" id="keypadWrapper">
+                <!-- Interactive keys injected dynamically -->
+            </section>
+
+            <!-- Action Strip (Hint & Clue Controls) -->
+            <footer class="action-strip">
+                <button class="action-btn hint-btn" id="hintBtn" title="Fills 1 random consonant slot (-10 PTS)">
+                    <span>⚡</span> OVERRIDE / HINT (-10 PTS)
+                </button>
+                <button class="action-btn" id="clueBtn" title="Inspect Facility Log for Clue">
+                    <span>📁</span> INSPECT LOG CLUE
+                </button>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Intro Modal (Start Briefing) -->
+    <div class="overlay-screen active" id="introModal">
+        <div class="modal-card">
+            <h1 class="modal-title danger">FACILITY 404: LOCKDOWN</h1>
+            <p class="modal-desc">
+                You are trapped inside a subterranean biological research bunker. Heavy security doors seal every room.
+                To survive and escape, you must decipher the electronic pincode panel at each sector door.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="lbl">VOWELS</span>
+                    <span class="val" style="color: var(--terminal-cyan);">AUTO-REVEALED</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">CONSONANTS</span>
+                    <span class="val" style="color: var(--terminal-green);">+10 PTS / REVEAL</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">PURGE LIMIT</span>
+                    <span class="val" style="color: var(--warning-red);">6 ERRORS</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">HINT OVERRIDE</span>
+                    <span class="val" style="color: var(--gold-accent);">-10 PTS</span>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="startBtn">ENTER FACILITY & START</button>
+        </div>
+    </div>
+
+    <!-- Stage Clear Modal -->
+    <div class="overlay-screen" id="stageClearModal">
+        <div class="modal-card">
+            <h2 class="modal-title success">ACCESS GRANTED</h2>
+            <p class="modal-desc">
+                The pneumatic door locks disengage with a heavy metallic hiss. The corridor ahead opens to the next room!
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="lbl">DECIPHERED CIPHER</span>
+                    <span class="val" id="clearedWordVal" style="color: var(--terminal-green); letter-spacing: 2px;">WORD</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">SECTOR CLEARED</span>
+                    <span class="val" id="clearedRoomVal">ROOM 01</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">STAGE CLEAR BONUS</span>
+                    <span class="val" style="color: var(--gold-accent);">+25 PTS</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">TOTAL SCORE</span>
+                    <span class="val" id="totalScoreVal" style="color: var(--terminal-cyan);">0</span>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="nextRoomBtn">PROCEED TO NEXT ROOM ➔</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal (Fatal Purge Sequence) -->
+    <div class="overlay-screen" id="gameOverModal">
+        <div class="modal-card">
+            <h2 class="modal-title danger">FATAL LOCKDOWN ACTIVATED</h2>
+            <p class="modal-desc">
+                6 failed attempt codes triggered room quarantine! Lethal nerve gas fills the chamber. Complete darkness ensues...
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="lbl">SECRET CIPHER WAS</span>
+                    <span class="val" id="revealedWordOnLoss" style="color: var(--warning-red); letter-spacing: 2px;">SECRET</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">ROOMS SURVIVED</span>
+                    <span class="val" id="roomsSurvivedVal">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">CONSONANTS REVEALED</span>
+                    <span class="val" id="consonantsGuessedVal">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="lbl">FINAL SCORE</span>
+                    <span class="val" id="finalScoreVal" style="color: var(--gold-accent);">0</span>
+                </div>
+            </div>
+
+            <button class="primary-btn danger-btn" id="restartBtn">RESTART SYSTEM (NEW RUN)</button>
+        </div>
+    </div>
+
+    <!-- Game JavaScript Files -->
+    <script src="words.js"></script>
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
