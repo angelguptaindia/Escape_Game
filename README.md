@@ -1,10 +1,13 @@
 # ☣ FACILITY 404 // Horror Escape Room Puzzle
 
+[![Play Live Demo](https://img.shields.io/badge/%F0%9F%8E%AE%20PLAY_LIVE_DEMO-GitHub_Pages-success?style=for-the-badge&logo=github)](https://angelguptaindia.github.io/Escape_Game/)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Web Audio API](https://img.shields.io/badge/Web%20Audio%20API-Synthesized-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+
+🔗 **Play Live Game:** [https://angelguptaindia.github.io/Escape_Game/](https://angelguptaindia.github.io/Escape_Game/)
 
 > *You are trapped inside Sector-7 of a subterranean biological research bunker. Heavy security doors seal every room. To survive and escape, decipher the terminal pincode panel before lethal nerve gas purges the chamber.*
 
